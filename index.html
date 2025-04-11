@@ -7,110 +7,125 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #101010;
-      color: #fff;
       margin: 0;
       padding: 0;
+      background: #111;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
+
     header {
-      background-color: #202020;
-      padding: 1rem;
+      background: #222;
+      padding: 15px;
       text-align: center;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: bold;
     }
+
     main {
-      padding: 1rem;
-    }
-    #chat {
-      max-height: 70vh;
-      overflow-y: auto;
-      margin-bottom: 1rem;
-    }
-    .message {
-      margin: 0.5rem 0;
-    }
-    .user { color: #00ff90; }
-    .bot { color: #00bfff; }
-    form {
-      display: flex;
-      gap: 0.5rem;
-    }
-    input[type="text"] {
       flex: 1;
-      padding: 0.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 10px;
+      overflow-y: auto;
+    }
+
+    .message {
+      margin: 8px 0;
+    }
+
+    .user {
+      color: #0ff;
+    }
+
+    .ai {
+      color: #0f0;
+    }
+
+    footer {
+      background: #222;
+      padding: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
+    input {
+      flex: 1;
+      padding: 8px;
       border-radius: 5px;
       border: none;
     }
+
     button {
-      padding: 0.5rem 1rem;
-      background-color: #00bfff;
-      color: #fff;
+      padding: 8px 12px;
       border: none;
+      background: #0f0;
+      color: #000;
+      font-weight: bold;
       border-radius: 5px;
+      cursor: pointer;
     }
   </style>
 </head>
 <body>
   <header>Mega AI World</header>
-  <main>
-    <div id="chat">
-      <div class="message bot"><strong>AI:</strong> Hello! How can I help you today?</div>
-    </div>
-    <form id="chat-form">
-      <input type="text" id="user-input" placeholder="Type your message..." required />
-      <button type="submit">Send</button>
-    </form>
+  <main id="chat">
+    <div class="message ai">AI: Hello! How can I help you today?</div>
   </main>
+  <footer>
+    <input type="text" id="input" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+  </footer>
 
   <script>
-    const chat = document.getElementById('chat');
-    const form = document.getElementById('chat-form');
-    const input = document.getElementById('user-input');
+    const chat = document.getElementById("chat");
+    const input = document.getElementById("input");
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const userMessage = input.value.trim();
-      if (!userMessage) return;
+    async function sendMessage() {
+      const userMsg = input.value.trim();
+      if (!userMsg) return;
 
-      appendMessage('You', userMessage, 'user');
-      input.value = '';
-
-      appendMessage('AI', 'Thinking...', 'bot');
+      appendMessage("You", userMsg, "user");
+      input.value = "";
+      appendMessage("AI", "Thinking...", "ai");
 
       try {
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": "Bearer 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"
+            "Authorization": "Bearer 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"
           },
           body: JSON.stringify({
             model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: userMessage }]
+            messages: [{ role: "user", content: userMsg }]
           })
         });
 
         const data = await response.json();
-        const botReply = data.choices?.[0]?.message?.content || "Sorry, no response.";
-        updateLastBotMessage(botReply);
+        const aiReply = data.choices?.[0]?.message?.content || "Sorry, no response.";
+        updateLastAIMessage(aiReply);
       } catch (error) {
-        updateLastBotMessage("Error in response.");
+        updateLastAIMessage("Error: Could not reach AI.");
       }
-    });
+    }
 
     function appendMessage(sender, text, className) {
-      const msg = document.createElement('div');
-      msg.classList.add('message', className);
-      msg.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      const msg = document.createElement("div");
+      msg.className = `message ${className}`;
+      msg.textContent = `${sender}: ${text}`;
       chat.appendChild(msg);
       chat.scrollTop = chat.scrollHeight;
     }
 
-    function updateLastBotMessage(text) {
-      const messages = document.querySelectorAll('.message.bot');
-      const lastBotMsg = messages[messages.length - 1];
-      if (lastBotMsg) lastBotMsg.innerHTML = `<strong>AI:</strong> ${text}`;
+    function updateLastAIMessage(text) {
+      const messages = document.querySelectorAll(".message.ai");
+      if (messages.length > 0) {
+        messages[messages.length - 1].textContent = `AI: ${text}`;
+      }
     }
   </script>
 </body>
