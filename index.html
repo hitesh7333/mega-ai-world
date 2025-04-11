@@ -1,14 +1,77 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mega AI World</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #1e1e1e;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      padding: 1rem;
+      background: #111;
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+    .chat-box {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+    }
+    .input-box {
+      display: flex;
+      padding: 1rem;
+      background: #111;
+    }
+    .input-box input {
+      flex: 1;
+      padding: 0.7rem;
+      border: none;
+      border-radius: 5px;
+    }
+    .input-box button {
+      margin-left: 0.5rem;
+      padding: 0.7rem 1rem;
+      border: none;
+      background: #3a3aff;
+      color: white;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+  </style>
 </head>
-<body style="font-family: sans-serif; text-align: center; padding: 40px;">
-  <h1>Welcome to Mega AI World</h1>
-  <p>This is a mobile-first lite version of your personal ChatGPT app.</p>
-  <p>Coming Soon...</p>
+<body>
+  <header>Mega AI World</header>
+  <div class="chat-box" id="chatBox">
+    <p><b>AI:</b> Hello! How can I help you today?</p>
+  </div>
+  <div class="input-box">
+    <input type="text" id="userInput" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
+
+  <script>
+    const chatBox = document.getElementById("chatBox");
+    const userInput = document.getElementById("userInput");
+
+    function sendMessage() {
+      const message = userInput.value.trim();
+      if (!message) return;
+      chatBox.innerHTML += `<p><b>You:</b> ${message}</p>`;
+      userInput.value = "";
+      setTimeout(() => {
+        chatBox.innerHTML += `<p><b>AI:</b> This is a sample response. Real AI integration coming soon.</p>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+      }, 1000);
+    }
+  </script>
 </body>
 </html>
