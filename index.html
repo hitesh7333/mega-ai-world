@@ -7,63 +7,66 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #000;
+      background: #121212;
       color: #fff;
-      padding: 20px;
+      margin: 0;
+      padding: 0;
     }
     .chat-box {
-      border: 1px solid #333;
-      padding: 10px;
-      max-height: 400px;
-      overflow-y: auto;
-      margin-bottom: 10px;
-      background-color: #111;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 1rem;
     }
-    .user, .bot {
-      margin: 8px 0;
+    .message {
+      margin-bottom: 1rem;
     }
-    .user { color: #1e90ff; }
-    .bot { color: #00ff99; }
+    .ai {
+      color: #00e676;
+    }
+    .user {
+      color: #64b5f6;
+    }
     input, button {
+      width: 100%;
       padding: 10px;
       font-size: 16px;
+      margin-top: 10px;
+      border-radius: 5px;
+      border: none;
     }
     input {
-      width: 70%;
-      background-color: #222;
-      color: #fff;
-      border: 1px solid #555;
+      background: #333;
+      color: white;
     }
     button {
-      background-color: #1e90ff;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0d6efd;
+      background: #00e676;
+      color: black;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>Mega AI World</h1>
   <div class="chat-box" id="chatBox">
-    <div class="bot">AI: Hello! How can I help you today?</div>
+    <div class="message ai">AI: Hello! How can I help you today?</div>
   </div>
-  <input type="text" id="userInput" placeholder="Type your message..." />
-  <button onclick="sendMessage()">Send</button>
+  <div class="chat-box">
+    <input type="text" id="userInput" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+  </div>
 
   <script>
+    const chatBox = document.getElementById("chatBox");
+    const userInput = document.getElementById("userInput");
+
     const OPENAI_API_KEY = "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";
 
     async function sendMessage() {
-      const userInput = document.getElementById("userInput").value;
-      if (!userInput) return;
+      const userMessage = userInput.value;
+      if (!userMessage.trim()) return;
 
-      const chatBox = document.getElementById("chatBox");
-      chatBox.innerHTML += `<div class="user">You: ${userInput}</div>`;
-      chatBox.innerHTML += `<div class="bot">AI: Thinking...</div>`;
-      document.getElementById("userInput").value = "";
+      chatBox.innerHTML += `<div class="message user">You: ${userMessage}</div>`;
+      chatBox.innerHTML += `<div class="message ai">AI: Thinking...</div>`;
+      userInput.value = "";
 
       try {
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -74,18 +77,16 @@
           },
           body: JSON.stringify({
             model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: userInput }],
+            messages: [{ role: "user", content: userMessage }],
           }),
         });
 
         const data = await response.json();
         const reply = data.choices?.[0]?.message?.content || "Sorry, no response.";
-        chatBox.innerHTML = chatBox.innerHTML.replace("AI: Thinking...", `AI: ${reply}`);
+        document.querySelector(".message.ai:last-child").innerHTML = `AI: ${reply}`;
       } catch (error) {
-        chatBox.innerHTML = chatBox.innerHTML.replace("AI: Thinking...", `AI: Error in response.`);
+        document.querySelector(".message.ai:last-child").innerHTML = `AI: Error - ${error.message}`;
       }
-
-      chatBox.scrollTop = chatBox.scrollHeight;
     }
   </script>
 </body>
