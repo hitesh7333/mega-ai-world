@@ -61,11 +61,11 @@
     const OPENAI_API_KEY = "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";
 
     async function sendMessage() {
-      const userMessage = userInput.value;
-      if (!userMessage.trim()) return;
+      const userMessage = userInput.value.trim();
+      if (!userMessage) return;
 
       chatBox.innerHTML += `<div class="message user">You: ${userMessage}</div>`;
-      chatBox.innerHTML += `<div class="message ai">AI: Thinking...</div>`;
+      chatBox.innerHTML += `<div class="message ai" id="thinking">AI: Thinking...</div>`;
       userInput.value = "";
 
       try {
@@ -77,15 +77,24 @@
           },
           body: JSON.stringify({
             model: "gpt-3.5-turbo",
-            messages: [{ role: "user", content: userMessage }],
+            messages: [
+              { role: "system", content: "You are a friendly assistant." },
+              { role: "user", content: userMessage }
+            ],
+            temperature: 0.7,
           }),
         });
 
         const data = await response.json();
-        const reply = data.choices?.[0]?.message?.content || "Sorry, no response.";
-        document.querySelector(".message.ai:last-child").innerHTML = `AI: ${reply}`;
+
+        if (data.choices && data.choices.length > 0) {
+          const reply = data.choices[0].message.content.trim();
+          document.getElementById("thinking").innerHTML = `AI: ${reply}`;
+        } else {
+          document.getElementById("thinking").innerHTML = `AI: (No reply received)`;
+        }
       } catch (error) {
-        document.querySelector(".message.ai:last-child").innerHTML = `AI: Error - ${error.message}`;
+        document.getElementById("thinking").innerHTML = `AI: Error - ${error.message}`;
       }
     }
   </script>
