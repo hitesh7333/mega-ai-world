@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,12 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Mega AI World</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #111; color: #fff; }
-    .chat-box { max-width: 600px; margin: auto; }
-    .ai, .user { margin: 10px 0; }
-    .ai { color: #00e676; }
-    .user { color: #64b5f6; }
-    input, button { padding: 10px; width: 80%; }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #111;
+      color: #fff;
+    }
+    .chat-box {
+      max-width: 600px;
+      margin: auto;
+    }
+    .ai, .user {
+      margin: 10px 0;
+    }
+    .ai {
+      color: #00e676;
+    }
+    .user {
+      color: #64b5f6;
+    }
+    input, button {
+      padding: 10px;
+      width: 80%;
+    }
   </style>
 </head>
 <body>
@@ -21,6 +38,7 @@
     <input type="text" id="userInput" placeholder="Type your message..." />
     <button onclick="sendMessage()">Send</button>
   </div>
+
   <script>
     async function sendMessage() {
       const input = document.getElementById('userInput');
@@ -29,11 +47,12 @@
       document.getElementById('chat').innerHTML += `<div class="user">You: ${message}</div>`;
       input.value = '';
 
-      const res = await fetch('/api/chat', {
+      const res = await fetch('/api/chatgpt', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message })
       });
+
       const data = await res.json();
       const reply = data.reply || "Error in response.";
       document.getElementById('chat').innerHTML += `<div class="ai">AI: ${reply}</div>`;
